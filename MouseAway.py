@@ -11,18 +11,32 @@ BLACK = (0,0,0)
 BLUE = (0,0,250)
 
 pos = [100,100]
+speed = 2
 
 class Player():
     def __init__(self,mouse):
         pygame.draw.circle(screen, BLUE, mouse, 10)
         self.x = mouse[0]
         self.y = mouse[1]
-        self.hitbox = (self.x + 1, self.y + 11, 29, 52)
 
+    def CheckHit(self):
+        hitboxUpLeft = [self.x-10,self.y-10]
+        hitboxUpRight = [self.x+10,self.y-10]
+        hitboxDownLeft = [self.x-10,self.y+10]
+        hitboxDownRight = [self.x+10,self.y+10]
+        if pos[0] > hitboxUpLeft[0] and pos[0] < hitboxUpRight[0] and pos[1] == hitboxUpRight[1]:
+            quit()
+        if pos[0] == hitboxUpLeft[0] and pos[1] > hitboxUpLeft[1] and pos[1] < hitboxDownLeft[1]:
+            quit()
+        if pos[0] > hitboxDownLeft[0] and pos[0] < hitboxDownRight[0] and pos[1] == hitboxDownRight[1]:
+            quit()
+        if pos[0] == hitboxUpLeft[0] and pos[1] > hitboxUpRight[1] and pos[1] < hitboxDownRight[1]:
+            quit()
+            
 class Enemy():
-    def __init__(self,mouse):       
+    def __init__(self,mouse,speed):       
         pygame.draw.circle(screen, RED, pos, 20)
-        speed = 2
+
         if pos[0] > mouse[0]:
             pos[0] -= speed
         if pos[0] < mouse[0]:
@@ -33,21 +47,16 @@ class Enemy():
             pos[1] += speed
 
 
-
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
     screen.fill((BLACK))
     mouse = pygame.mouse.get_pos()
     P = Player(mouse)
-    E = Enemy(mouse)
+    E = Enemy(mouse,speed)
     Player(mouse)
-    Enemy(mouse)
-
-    if pos == P.hitbox:
-        quit()
-
-
+    Enemy(mouse,speed)
+    P.CheckHit()
 
     pygame.display.update()
     clock.tick(60)
