@@ -20,9 +20,9 @@ Start = True
 Menuframes = 0
 Level = 1
 rawCounter = 0
-counter = 20
-speed = 1
-fps = 0
+counter = 10
+speed = 2
+
 
 
 
@@ -33,35 +33,24 @@ def drawPlayer(mouse):
     y = mouse[1]
     return x,y
 
-def CheckHit(x,y):
-    hitboxUpLeft = [x-20,y-20]
-    hitboxUpRight = [x+20,y-20]
-    hitboxDownLeft = [x-20,y+20]
-    hitboxDownRight = [x+20,y+20]
-    if pos[0] > hitboxUpLeft[0] and pos[0] < hitboxUpRight[0] and pos[1] == hitboxUpRight[1]:
-        quit()
-    if pos[0] == hitboxUpLeft[0] and pos[1] > hitboxUpLeft[1] and pos[1] < hitboxDownLeft[1]:
-        quit()
-    if pos[0] > hitboxDownLeft[0] and pos[0] < hitboxDownRight[0] and pos[1] == hitboxDownRight[1]:
-        quit()
-    if pos[0] == hitboxUpLeft[0] and pos[1] > hitboxUpRight[1] and pos[1] < hitboxDownRight[1]:
-       quit()
-    if pos == mouse:
+def CheckHit():
+    hitboxP = pygame.draw.circle(screen, BLUE, mouse, 10)
+    hitboxE = pygame.draw.circle(screen, RED, pos, 20)
+    if hitboxP.colliderect(hitboxE):
         quit()
 
 
-class Enemy():
-    def __init__(self,mouse,speed):       
-        pygame.draw.circle(screen, RED, pos, 20)
 
-        if pos[0] > mouse[0]:
-            pos[0] -= speed
-        if pos[0] < mouse[0]:
-            pos[0] += speed
-        if pos[1] > mouse[1]:
-            pos[1] -= speed
-        if pos[1] < mouse[1]:
-            pos[1] += speed
+def EnemyMovement(mouse,speed):       
+    pygame.draw.circle(screen, RED, pos, 20)
+    if pos[0] > mouse[0]:
+        pos[0] -= speed
+    if pos[0] < mouse[0]:
+        pos[0] += speed
+    if pos[1] > mouse[1]:
+        pos[1] -= speed
+    if pos[1] < mouse[1]:
+        pos[1] += speed
 
 def DisplayLevel():
     text_surface = font.render(('Level '+str(Level)), False, (255, 255, 255))
@@ -79,13 +68,13 @@ while Start:
         if event.type == pygame.QUIT: sys.exit()
     screen.fill((BLACK))
 
-    counter = 20
+    counter = 10
     Menuframes = 0
-    fps += 120
+    speed += 1
     Menu = True
     
     pygame.display.update()
-    clock.tick(fps)
+    clock.tick(60)
     #second loop
     while Menu:
         for event in pygame.event.get():
@@ -114,25 +103,24 @@ while Start:
             x = mouse[0]
             y = mouse[1]
             drawPlayer(mouse)
-            Enemy(mouse,speed)
-            CheckHit(x,y)
+            EnemyMovement(mouse,speed)
+            CheckHit()
             DisplayLevel()
 
             # Timer
             rawCounter += 1
-            if rawCounter >= fps:
+            if rawCounter >= 60: 
                 counter -= 1
+                rawCounter = 0
             text_surface = font.render((str(counter)), False, (255, 255, 255))
             screen.blit(text_surface, dest=(275,550))
-            if rawCounter >= fps:
-                rawCounter = 0
+
+                
             if counter == 0:
                 Level += 1
                 Game = False
                 Menu = False
             #Timer
 
-            if CheckHit(x,y):
-                counter = 0
             pygame.display.update()
-            clock.tick(fps)
+            clock.tick(60)
