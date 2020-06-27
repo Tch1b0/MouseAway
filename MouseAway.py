@@ -16,7 +16,6 @@ pos = [100,100]
 
 Game = False
 Start = True
-Dead = False
 
 Menuframes = 0
 Level = 1
@@ -35,7 +34,7 @@ def CheckHit():
     hitboxP = pygame.draw.circle(screen, BLUE, mouse, 10)
     hitboxE = pygame.draw.circle(screen, RED, pos, 20)
     if hitboxP.colliderect(hitboxE):
-        Dead = True
+        quit()
 
 def EnemyMovement(mouse,speed):       
     pygame.draw.circle(screen, RED, pos, 20)
@@ -52,12 +51,13 @@ def DisplayLevel():
     text_surface = font.render(('Level '+str(Level)), False, (255, 255, 255))
     screen.blit(text_surface, dest=(225,0))
 
-def IfDead2():
-    screen.fill((BLACK))
-    text_surface = font.render(("You Died on Level "+str(Level)), False, (255, 255, 255))
-    screen.blit(text_surface, dest=(200,250))
+def Timer(font,counter):
+
+    text_surface = font.render((str(counter)), False, (255, 255, 255))
+    screen.blit(text_surface, dest=(275,550))
 
 
+    return rawCounter,counter
 #mainloop
 while Start:
     for event in pygame.event.get():
@@ -103,27 +103,14 @@ while Start:
             CheckHit()
             DisplayLevel()
 
-            # Timer
             rawCounter += 1
+            Timer(font,counter)
             if rawCounter >= 60: 
                 counter -= 1
                 rawCounter = 0
-            text_surface = font.render((str(counter)), False, (255, 255, 255))
-            screen.blit(text_surface, dest=(275,550))
-
-                
             if counter == 0:
                 Level += 1
                 Game = False
                 Menu = False
-            #Timer
-            while Dead:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT: sys.exit()
-                    screen.fill((BLACK))
-                    text_surface = font.render(("You Died on Level "+str(Level)), False, (255, 255, 255))
-                    screen.blit(text_surface, dest=(200,250))
-                    pygame.display.update()
-                    clock.tick(60)
             pygame.display.update()
             clock.tick(60)
