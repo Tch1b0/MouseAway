@@ -22,7 +22,7 @@ Level = 1
 rawCounter = 0
 counter = 20
 speed = 1
-fps = 60
+fps = 0
 
 class Player():
     def __init__(self,mouse):
@@ -66,7 +66,10 @@ def DisplayLevel():
 
 
 while Start:
+    screen.fill((BLACK))
+    counter = 20
     Menuframes = 0
+    fps += 60
     Menu = True
     while Menu:
         for event in pygame.event.get():
@@ -100,14 +103,14 @@ while Start:
             if rawCounter >= fps:
                 counter -= 1
             text_surface = font.render((str(counter)), False, (255, 255, 255))
-            screen.blit(text_surface, dest=(250,550))
+            screen.blit(text_surface, dest=(275,550))
             if rawCounter >= fps:
                 rawCounter = 0
             if counter == 0:
                 Level += 1
                 Game = False
                 Menu = False
-                quit()
+
             #Timer
 
             pygame.display.update()
