@@ -16,15 +16,13 @@ pos = [100,100]
 
 Game = False
 Start = True
+Dead = False
 
 Menuframes = 0
 Level = 1
 rawCounter = 0
 counter = 10
 speed = 2
-
-
-
 
 
 def drawPlayer(mouse):
@@ -37,9 +35,7 @@ def CheckHit():
     hitboxP = pygame.draw.circle(screen, BLUE, mouse, 10)
     hitboxE = pygame.draw.circle(screen, RED, pos, 20)
     if hitboxP.colliderect(hitboxE):
-        quit()
-
-
+        Dead = True
 
 def EnemyMovement(mouse,speed):       
     pygame.draw.circle(screen, RED, pos, 20)
@@ -56,11 +52,11 @@ def DisplayLevel():
     text_surface = font.render(('Level '+str(Level)), False, (255, 255, 255))
     screen.blit(text_surface, dest=(225,0))
 
-
 def IfDead2():
     screen.fill((BLACK))
     text_surface = font.render(("You Died on Level "+str(Level)), False, (255, 255, 255))
     screen.blit(text_surface, dest=(200,250))
+
 
 #mainloop
 while Start:
@@ -121,6 +117,13 @@ while Start:
                 Game = False
                 Menu = False
             #Timer
-
+            while Dead:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT: sys.exit()
+                    screen.fill((BLACK))
+                    text_surface = font.render(("You Died on Level "+str(Level)), False, (255, 255, 255))
+                    screen.blit(text_surface, dest=(200,250))
+                    pygame.display.update()
+                    clock.tick(60)
             pygame.display.update()
             clock.tick(60)
