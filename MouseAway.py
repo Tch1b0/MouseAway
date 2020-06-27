@@ -24,27 +24,31 @@ counter = 20
 speed = 1
 fps = 0
 
-class Player():
-    def __init__(self,mouse):
-        pygame.draw.circle(screen, BLUE, mouse, 10)
-        self.x = mouse[0]
-        self.y = mouse[1]
 
-    def CheckHit(self):
-        hitboxUpLeft = [self.x-20,self.y-20]
-        hitboxUpRight = [self.x+20,self.y-20]
-        hitboxDownLeft = [self.x-20,self.y+20]
-        hitboxDownRight = [self.x+20,self.y+20]
-        if pos[0] > hitboxUpLeft[0] and pos[0] < hitboxUpRight[0] and pos[1] == hitboxUpRight[1]:
-            quit()
-        if pos[0] == hitboxUpLeft[0] and pos[1] > hitboxUpLeft[1] and pos[1] < hitboxDownLeft[1]:
-            quit()
-        if pos[0] > hitboxDownLeft[0] and pos[0] < hitboxDownRight[0] and pos[1] == hitboxDownRight[1]:
-            quit()
-        if pos[0] == hitboxUpLeft[0] and pos[1] > hitboxUpRight[1] and pos[1] < hitboxDownRight[1]:
-            quit()
-        if pos == [self.x,self.y]:
-            quit()
+
+
+def drawPlayer(mouse):
+    pygame.draw.circle(screen, BLUE, mouse, 10)
+    x = mouse[0]
+    y = mouse[1]
+    return x,y
+
+def CheckHit(x,y):
+    hitboxUpLeft = [x-20,y-20]
+    hitboxUpRight = [x+20,y-20]
+    hitboxDownLeft = [x-20,y+20]
+    hitboxDownRight = [x+20,y+20]
+    if pos[0] > hitboxUpLeft[0] and pos[0] < hitboxUpRight[0] and pos[1] == hitboxUpRight[1]:
+        quit()
+    if pos[0] == hitboxUpLeft[0] and pos[1] > hitboxUpLeft[1] and pos[1] < hitboxDownLeft[1]:
+        quit()
+    if pos[0] > hitboxDownLeft[0] and pos[0] < hitboxDownRight[0] and pos[1] == hitboxDownRight[1]:
+        quit()
+    if pos[0] == hitboxUpLeft[0] and pos[1] > hitboxUpRight[1] and pos[1] < hitboxDownRight[1]:
+       quit()
+    if pos == mouse:
+        quit()
+
 
 class Enemy():
     def __init__(self,mouse,speed):       
@@ -64,16 +68,30 @@ def DisplayLevel():
     screen.blit(text_surface, dest=(225,0))
 
 
-
-while Start:
+def IfDead2():
     screen.fill((BLACK))
+    text_surface = font.render(("You Died on Level "+str(Level)), False, (255, 255, 255))
+    screen.blit(text_surface, dest=(200,250))
+
+#mainloop
+while Start:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT: sys.exit()
+    screen.fill((BLACK))
+
     counter = 20
     Menuframes = 0
-    fps += 60
+    fps += 120
     Menu = True
+    
+    pygame.display.update()
+    clock.tick(fps)
+    #second loop
     while Menu:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: sys.exit()
+
+        
         pressed = pygame.key.get_pressed()
         text_surface = font.render(("Level ")+(str(Level)), False, (255, 255, 255))
         screen.blit(text_surface, dest=(235,200))
@@ -86,16 +104,18 @@ while Start:
         if Menuframes == 0:
             pygame.display.update()
             Menuframes = 1
+
+        #third loop
         while Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
             screen.fill((BLACK))
             mouse = pygame.mouse.get_pos()
-            P = Player(mouse)
-            E = Enemy(mouse,speed)
-            Player(mouse)
+            x = mouse[0]
+            y = mouse[1]
+            drawPlayer(mouse)
             Enemy(mouse,speed)
-            P.CheckHit()
+            CheckHit(x,y)
             DisplayLevel()
 
             # Timer
@@ -110,8 +130,9 @@ while Start:
                 Level += 1
                 Game = False
                 Menu = False
-
             #Timer
 
+            if CheckHit(x,y):
+                counter = 0
             pygame.display.update()
             clock.tick(fps)
